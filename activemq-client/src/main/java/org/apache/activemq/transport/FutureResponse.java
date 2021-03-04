@@ -62,13 +62,13 @@ public class FutureResponse {
         }
         InterruptedIOException interruptedIOException = new InterruptedIOException(e.getMessage());
         interruptedIOException.initCause(e);
-        try {
-            if (transportFilter != null) {
-                transportFilter.onException(interruptedIOException);
-            }
-        } finally {
-            Thread.currentThread().interrupt();
-        }
+//        try {
+//            if (transportFilter != null) {
+//                transportFilter.onException(interruptedIOException);
+//            }
+//        } finally {
+//            Thread.currentThread().interrupt();
+//        }
         return interruptedIOException;
     }
 
