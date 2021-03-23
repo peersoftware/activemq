@@ -19,13 +19,18 @@ package org.apache.activemq.broker.jmx;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
+import javax.management.remote.JMXConnectorServerFactory;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -51,6 +56,7 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXServiceURL;
 import javax.management.remote.rmi.RMIConnectorServer;
 import javax.management.remote.rmi.RMIJRMPServerImpl;
+import javax.net.ServerSocketFactory;
 
 import org.apache.activemq.Service;
 import org.slf4j.Logger;
@@ -155,18 +161,18 @@ public class ManagementContext implements Service {
                             MDC.put("activemq.broker", brokerName);
                         }
                         try {
+							JMXConnectorServer server = connectorServer;
                             if (started.get() && server != null) {
                                 LOG.debug("Starting JMXConnectorServer...");
                                 try {
                                     // need to remove MDC as we must not inherit MDC in child threads causing leaks
                                     MDC.remove("activemq.broker");
-                                    connectorServer.start();
-                                    serverStub = server.toStub();
+									server.start();
                                 } finally {
                                     if (brokerName != null) {
                                         MDC.put("activemq.broker", brokerName);
                                     }
-                                    connectorStarted.countDown();
+									connectorStarted.countDown();
                                 }
                                 LOG.info("JMX consoles can connect to {}", connectorServer.getAddress());
                             }
@@ -560,8 +566,17 @@ public class ManagementContext implements Service {
         // Create the NamingService, needed by JSR 160
         try {
             if (registry == null) {
-                LOG.debug("Creating RMIRegistry on port {}", connectorPort);
-                registry = new JmxRegistry(connectorPort);
+            	 RMIServerSocketFactory serverFactory = new RMIServerSocketFactoryImpl(InetAddress.getByName(getConnectorHost()));
+                 registry = LocateRegistry.createRegistry(connectorPort, null, serverFactory);
+                 
+//                 if (environment == null) {
+//                 	setEnvironment( new HashMap<String, Object>() );
+//                 }
+//                 Map envMap = new HashMap<String, Object>();
+//                 envMap.put(RMIConnectorServer.RMI_SERVER_SOCKET_FACTORY_ATTRIBUTE, serverFactory);
+//                 environment.putAll(envMap);
+//				 System.setProperty("java.rmi.server.hostname", "0.0.0.0".equals(getConnectorHost()) ? "127.0.0.1" : getConnectorHost());
+
             }
 
             namingServiceObjectName = ObjectName.getInstance("naming:type=rmiregistry");
@@ -587,13 +602,49 @@ public class ManagementContext implements Service {
             rmiServer = ""+getConnectorHost()+":" + rmiServerPort;
         }
 
-        server = new RMIJRMPServerImpl(connectorPort, null, null, environment);
-
         final String serviceURL = "service:jmx:rmi://" + rmiServer + "/jndi/rmi://" +getConnectorHost()+":" + connectorPort + connectorPath;
         final JMXServiceURL url = new JMXServiceURL(serviceURL);
 
-        connectorServer = new RMIConnectorServer(url, environment, server, ManagementFactory.getPlatformMBeanServer());
+		connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, mbeanServer);
+
         LOG.debug("Created JMXConnectorServer {}", connectorServer);
+    }
+    
+    /**
+     *   By default JMX RMI binds to all interfaces via 0.0.0.0 regardless of what com.sun.management.jmxremote.host is set to
+     *   
+     *   java.rmi.server.hostname does not control which IP Address the RMI Server binds do.  This tells what ipaddress/hostname
+     *   for the RMI Client to connect to server to.  This class is the workaround to bind to specific ipAddress
+     *   
+     */
+    public class RMIServerSocketFactoryImpl implements RMIServerSocketFactory {
+
+        private final InetAddress localAddress;
+
+        public RMIServerSocketFactoryImpl( final InetAddress pAddress ) {
+            localAddress = pAddress;
+        }
+
+        public ServerSocket createServerSocket(final int port) throws IOException  {
+        	ServerSocket result = new ServerSocket(port, 0, localAddress);
+			result.setReuseAddress(true);
+            return result;
+        }
+
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (obj == this) {
+                return true;
+            }
+
+            return obj.getClass().equals(getClass());
+        }
+
+        public int hashCode() {
+            return RMIServerSocketFactoryImpl.class.hashCode();
+        }
     }
 
     public String getConnectorPath() {
