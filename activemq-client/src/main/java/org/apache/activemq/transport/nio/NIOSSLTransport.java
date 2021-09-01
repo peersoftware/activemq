@@ -256,6 +256,11 @@ public class NIOSSLTransport extends NIOTransport {
             plain.position(plain.limit());
 
             while (true) {
+                //If the transport was already stopped then break
+                if (this.isStopped()) {
+                    return;
+                }
+
                 if (!plain.hasRemaining()) {
 
                     int readCount = secureRead(plain);
@@ -368,7 +373,8 @@ public class NIOSSLTransport extends NIOTransport {
         }
     }
 
-    protected int secureRead(ByteBuffer plain) throws Exception {
+    //Prevent concurrent access while reading from the channel
+    protected synchronized int secureRead(ByteBuffer plain) throws Exception {
 
         if (!(inputBuffer.position() != 0 && inputBuffer.hasRemaining()) || status == SSLEngineResult.Status.BUFFER_UNDERFLOW) {
             int bytesRead = channel.read(inputBuffer);
