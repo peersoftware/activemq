@@ -232,9 +232,9 @@
 
   <scm>
     <connection>scm:git:http://gitbox.apache.org/repos/asf/activemq.git</connection>
-    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/activemq.git</developerConnection>
-    <url>https://github.com/apache/activemq</url>
-    <tag>activemq-6.2.0</tag>
+	<developerConnection>scm:git:https://github.com/peersoftware/activemq.git</developerConnection>
+    <url>https://github.com/peersoftware/activemq</url>
+    <tag>activemq-6.2.1</tag>
   </scm>
 
   <dependencyManagement>
