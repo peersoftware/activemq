@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>18</version>
+    <version>24</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -31,6 +31,9 @@
   <inceptionYear>2005</inceptionYear>
 
   <properties>
+    <!-- for reproducible builds -->	
+    <project.build.outputTimestamp>10</project.build.outputTimestamp>
+
     <activeio-version>3.1.4</activeio-version>
     <siteId>activemq-${project.version}</siteId>
     <projectName>Apache ActiveMQ</projectName>
@@ -48,24 +51,24 @@
     <commons-beanutils-version>1.9.4</commons-beanutils-version>
     <commons-collections-version>3.2.2</commons-collections-version>
     <commons-daemon-version>1.2.4</commons-daemon-version>
-    <commons-dbcp2-version>2.8.0</commons-dbcp2-version>
+    <commons-dbcp2-version>2.9.0</commons-dbcp2-version>
     <commons-io-version>2.11.0</commons-io-version>
     <commons-lang-version>3.12.0</commons-lang-version>
     <commons-logging-version>1.2</commons-logging-version>
-    <commons-pool2-version>2.10.0</commons-pool2-version>
+    <commons-pool2-version>2.11.1</commons-pool2-version>
     <commons-primitives-version>1.0</commons-primitives-version>
     <commons-net-version>3.8.0</commons-net-version>
     <directory-version>2.0.0.AM25</directory-version>
     <ecj.version>3.17.0</ecj.version>
     <ftpserver-version>1.1.1</ftpserver-version>
-    <guava-version>28.2-jre</guava-version>
+    <guava-version>31.0.1-jre</guava-version>
     <hadoop-version>1.2.1</hadoop-version>
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdispatch-version>1.22</hawtdispatch-version>
     <httpclient-version>4.5.13</httpclient-version>
-    <httpcore-version>4.4.14</httpcore-version>
+    <httpcore-version>4.4.15</httpcore-version>
     <insight-version>1.2.0.Beta4</insight-version>
-    <jackson-version>2.12.4</jackson-version>
+    <jackson-version>2.13.0</jackson-version>
     <jasypt-version>1.9.3</jasypt-version>
     <jaxb-bundle-version>2.2.11_1</jaxb-bundle-version>
     <jetty9-version>9.4.43.v20210629</jetty9-version>
@@ -101,19 +104,19 @@
     <rome-version>1.16.0</rome-version>
     <scala-plugin-version>3.1.0</scala-plugin-version>
     <scala-version>2.11.11</scala-version>
-    <shiro-version>1.7.1</shiro-version>
+    <shiro-version>1.8.0</shiro-version>
     <scalatest-version>3.0.8</scalatest-version>
-    <slf4j-version>1.7.31</slf4j-version>
+    <slf4j-version>1.7.32</slf4j-version>
     <snappy-version>1.1.2</snappy-version>
     <spring-version>4.3.30.RELEASE</spring-version>
     <taglibs-version>1.2.5</taglibs-version>
     <velocity-version>2.3</velocity-version>
     <xalan-version>2.7.2</xalan-version>
     <xpp3-version>1.1.4c</xpp3-version>
-    <xstream-version>1.4.17</xstream-version>
+    <xstream-version>1.4.18</xstream-version>
     <xbean-version>4.20</xbean-version>
     <xerces-version>2.12.0</xerces-version>
-    <jaxb-basics-version>0.6.4</jaxb-basics-version>
+    <jaxb-basics-version>0.12.0</jaxb-basics-version>
     <stompjms-version>1.19</stompjms-version>
 
     <pax-exam-version>4.13.1</pax-exam-version>
@@ -516,7 +519,7 @@
      <dependency>
        <groupId>org.ow2.asm</groupId>
        <artifactId>asm</artifactId>
-       <version>7.3.1</version>
+       <version>9.2</version>
      </dependency>
 
       <!-- Servlet 3.1 and JSP -->
