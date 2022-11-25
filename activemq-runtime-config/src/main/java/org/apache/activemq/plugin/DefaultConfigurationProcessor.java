@@ -55,7 +55,18 @@ public class DefaultConfigurationProcessor implements ConfigurationProcessor {
             plugin.info("changes to " + configurationClass.getSimpleName());
         }
 
-        processChanges(current, modified);
+		ConfigurationProcessor processor = null;
+		if ((current.size() > 0 ) && (getContents(current.get(0)).size() > 0)) {
+			processor = findProcessor(getContents(current.get(0)).get(0));
+		} else if (modified.size() > 0) {
+			processor = findProcessor(getContents(modified.get(0)).get(0));
+		}
+
+		if (processor != null) {
+			processor.processChanges(current, modified);
+		} else {
+			processChanges(current, modified);
+		}
     }
 
     public void processChanges(List current, List modified) {
