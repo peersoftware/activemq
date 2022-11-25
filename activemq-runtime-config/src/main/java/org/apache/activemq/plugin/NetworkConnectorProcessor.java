@@ -17,6 +17,8 @@
 package org.apache.activemq.plugin;
 
 import java.util.TreeMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.activemq.network.DiscoveryNetworkConnector;
 import org.apache.activemq.network.NetworkConnector;
@@ -29,10 +31,54 @@ public class NetworkConnectorProcessor extends DefaultConfigurationProcessor {
         super(plugin, configurationClass);
     }
 
-    @Override
-    public void addNew(Object o) {
-        DtoNetworkConnector networkConnector = (DtoNetworkConnector) o;
-        if (networkConnector.getUri() != null) {
+	private boolean removeNC(List current, DtoNetworkConnector modDto) {
+		for (Object currConns : current) {
+			for (Object currObj : getContents(currConns)) {
+
+				DtoNetworkConnector currDto = (DtoNetworkConnector) currObj;
+
+				if (configMatch(modDto, currDto)) {
+					getContents(currConns).remove(currObj);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public void processChanges(List current, List modified) {
+		List <Object>toAdd = new ArrayList<Object>();
+
+		for (Object modconns : modified) {
+			for (Object modObj : getContents(modconns)) {
+
+				/* If we didn't find this entry in the current config then mark it to be added after removals */
+				if (!removeNC(current, (DtoNetworkConnector)modObj)) {
+					toAdd.add(modObj);
+				}
+			}
+		}
+
+		/* Anything left in the current list can be removed. */
+		for (Object connectors : current) {
+			for (Object currObj : getContents(connectors)) {
+				plugin.debug("Removing Network Connector " + (DtoNetworkConnector)currObj);
+				remove(currObj);
+			}
+		}
+
+		/* Add all the NC marked to be added. */
+		for (Object dto : toAdd) {
+			plugin.debug("Adding Network Connector " + (DtoNetworkConnector)dto);
+			addNew(dto);
+		}
+	}
+
+	@Override
+	public void addNew(Object o) {
+		DtoNetworkConnector networkConnector = (DtoNetworkConnector) o;
+		if (networkConnector.getUri() != null) {
             try {
                 DiscoveryNetworkConnector nc = fromDto(networkConnector, new DiscoveryNetworkConnector());
                 plugin.getBrokerService().addNetworkConnector(nc);
@@ -60,7 +106,17 @@ public class NetworkConnectorProcessor extends DefaultConfigurationProcessor {
                 }
             }
         }
-    }
+	}
+
+	private boolean configMatch(DtoNetworkConnector dto, DtoNetworkConnector candidate) {
+		TreeMap<String, String> dtoProps = new TreeMap<String, String>();
+		IntrospectionSupport.getProperties(dto, dtoProps, null);
+
+		TreeMap<String, String> candidateProps = new TreeMap<String, String>();
+		IntrospectionSupport.getProperties(candidate, candidateProps, null);
+
+		return configMatchProps(dtoProps, candidateProps);
+	}
 
     private boolean configMatch(DtoNetworkConnector dto, NetworkConnector candidate) {
         TreeMap<String, String> dtoProps = new TreeMap<String, String>();
@@ -68,6 +124,11 @@ public class NetworkConnectorProcessor extends DefaultConfigurationProcessor {
 
         TreeMap<String, String> candidateProps = new TreeMap<String, String>();
         IntrospectionSupport.getProperties(candidate, candidateProps, null);
+
+		return configMatchProps(dtoProps, candidateProps);
+	}
+
+	private boolean configMatchProps(TreeMap<String, String> dtoProps, TreeMap<String, String> candidateProps) {
 
         // every dto prop must be present in the candidate
         for (String key : dtoProps.keySet()) {
