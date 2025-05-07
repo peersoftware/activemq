@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.18.5-SNAPSHOT</version>
+    <version>5.18.8-SNAPSHOT</version>
   </parent>
 
   <artifactId>activemq-openwire-generator</artifactId>
@@ -30,25 +30,14 @@
 
   <dependencies>
     <dependency>
-      <groupId>groovy</groupId>
-      <artifactId>gram</artifactId>
-      <version>1.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>ant</groupId>
-          <artifactId>ant</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.apache.groovy</groupId>
       <artifactId>groovy</artifactId>
-      <version>4.0.6</version>
+      <version>4.0.23</version>
     </dependency>
     <dependency>
       <groupId>org.apache.groovy</groupId>
       <artifactId>groovy-ant</artifactId>
-      <version>4.0.6</version>
+      <version>4.0.23</version>
     </dependency>
     <dependency>
       <groupId>annogen</groupId>

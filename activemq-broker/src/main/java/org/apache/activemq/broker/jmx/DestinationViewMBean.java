@@ -479,4 +479,18 @@ public interface DestinationViewMBean {
     @MBeanInfo("Total time (ms) messages have been blocked by flow control")
     long getTotalBlockedTime();
 
+    @MBeanInfo("Number of times the max uncommitted limit has been exceed for this destination")
+    long getMaxUncommittedExceededCount();
+
+    @MBeanInfo("Query Advanced Network Statistics flag")
+    boolean isAdvancedNetworkStatisticsEnabled();
+
+    @MBeanInfo("Toggle Advanced Network Statistics flag")
+    void setAdvancedNetworkStatisticsEnabled(boolean advancedNetworkStatisticsEnabled);
+
+    @MBeanInfo("Number of messages sent to the destination via network connection")
+    long getNetworkEnqueues();
+
+    @MBeanInfo("Number of messages acknowledged from the destination via network connection")
+    long getNetworkDequeues();
 }

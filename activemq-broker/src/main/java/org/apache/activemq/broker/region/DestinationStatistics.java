@@ -44,7 +44,11 @@ public class DestinationStatistics extends StatsImpl {
     protected CountStatisticImpl blockedSends;
     protected TimeStatisticImpl blockedTime;
     protected SizeStatisticImpl messageSize;
+    protected CountStatisticImpl maxUncommittedExceededCount;
 
+    // [AMQ-9437] Advanced Statistics are optionally enabled
+    protected CountStatisticImpl networkEnqueues;
+    protected CountStatisticImpl networkDequeues;
 
     public DestinationStatistics() {
 
@@ -67,6 +71,11 @@ public class DestinationStatistics extends StatsImpl {
         blockedSends = new CountStatisticImpl("blockedSends", "number of messages that have to wait for flow control");
         blockedTime = new TimeStatisticImpl("blockedTime","amount of time messages are blocked for flow control");
         messageSize = new SizeStatisticImpl("messageSize","Size of messages passing through the destination");
+        maxUncommittedExceededCount = new CountStatisticImpl("maxUncommittedExceededCount", "number of times maxUncommittedCount has been exceeded");
+
+        networkEnqueues = new CountStatisticImpl("networkEnqueues", "The number of messages that have been sent to the destination via network connection");
+        networkDequeues = new CountStatisticImpl("networkDequeues", "The number of messages that have been acknowledged from the destination via network connection");
+
         addStatistic("enqueues", enqueues);
         addStatistic("dispatched", dispatched);
         addStatistic("dequeues", dequeues);
@@ -81,6 +90,10 @@ public class DestinationStatistics extends StatsImpl {
         addStatistic("blockedSends",blockedSends);
         addStatistic("blockedTime",blockedTime);
         addStatistic("messageSize",messageSize);
+        addStatistic("maxUncommittedExceededCount", maxUncommittedExceededCount);
+
+        addStatistic("networkEnqueues", networkEnqueues);
+        addStatistic("networkDequeues", networkDequeues);
     }
 
     public CountStatisticImpl getEnqueues() {
@@ -145,6 +158,18 @@ public class DestinationStatistics extends StatsImpl {
         return this.messageSize;
     }
 
+    public CountStatisticImpl getMaxUncommittedExceededCount(){
+        return this.maxUncommittedExceededCount;
+    }
+
+    public CountStatisticImpl getNetworkEnqueues() {
+        return networkEnqueues;
+    }
+
+    public CountStatisticImpl getNetworkDequeues() {
+        return networkDequeues;
+    }
+
     public void reset() {
         if (this.isDoReset()) {
             super.reset();
@@ -158,6 +183,9 @@ public class DestinationStatistics extends StatsImpl {
             blockedSends.reset();
             blockedTime.reset();
             messageSize.reset();
+            maxUncommittedExceededCount.reset();
+            networkEnqueues.reset();
+            networkDequeues.reset();
         }
     }
 
@@ -178,7 +206,11 @@ public class DestinationStatistics extends StatsImpl {
         blockedSends.setEnabled(enabled);
         blockedTime.setEnabled(enabled);
         messageSize.setEnabled(enabled);
+        maxUncommittedExceededCount.setEnabled(enabled);
 
+        // [AMQ-9437] Advanced Statistics
+        networkEnqueues.setEnabled(enabled);
+        networkDequeues.setEnabled(enabled);
     }
 
     public void setParent(DestinationStatistics parent) {
@@ -198,6 +230,9 @@ public class DestinationStatistics extends StatsImpl {
             blockedSends.setParent(parent.blockedSends);
             blockedTime.setParent(parent.blockedTime);
             messageSize.setParent(parent.messageSize);
+            maxUncommittedExceededCount.setParent(parent.maxUncommittedExceededCount);
+            networkEnqueues.setParent(parent.networkEnqueues);
+            networkDequeues.setParent(parent.networkDequeues);
         } else {
             enqueues.setParent(null);
             dispatched.setParent(null);
@@ -214,6 +249,9 @@ public class DestinationStatistics extends StatsImpl {
             blockedSends.setParent(null);
             blockedTime.setParent(null);
             messageSize.setParent(null);
+            maxUncommittedExceededCount.setParent(null);
+            networkEnqueues.setParent(null);
+            networkDequeues.setParent(null);
         }
     }
 
