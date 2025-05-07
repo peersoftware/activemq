@@ -25,14 +25,14 @@
 
   <groupId>org.apache.activemq</groupId>
   <artifactId>activemq-parent</artifactId>
-  <version>6.1.7-SNAPSHOT</version>
+  <version>6.1.6-PEER-6</version>
   <packaging>pom</packaging>
   <name>ActiveMQ</name>
   <inceptionYear>2005</inceptionYear>
 
   <properties>
     <!-- for reproducible builds -->	
-    <project.build.outputTimestamp>2025-03-06T13:15:08Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2025-05-07T11:32:03Z</project.build.outputTimestamp>
 
     <siteId>activemq-${project.version}</siteId>
     <projectName>Apache ActiveMQ</projectName>
@@ -241,7 +241,7 @@
     <connection>scm:git:http://gitbox.apache.org/repos/asf/activemq.git</connection>
 	<developerConnection>scm:git:https://github.com/peersoftware/activemq.git</developerConnection>
     <url>https://github.com/peersoftware/activemq</url>
-    <tag>main</tag>
+    <tag>activemq-6.1.6-PEER-6</tag>
   </scm>
 
   <dependencyManagement>
