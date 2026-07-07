@@ -109,17 +109,7 @@ public class NetworkConnectorProcessor extends DefaultConfigurationProcessor {
         }
 	}
 
-	private boolean configMatch(DtoNetworkConnector dto, DtoNetworkConnector candidate) {
-		TreeMap<String, String> dtoProps = new TreeMap<String, String>();
-		IntrospectionSupport.getProperties(dto, dtoProps, null);
-
-		TreeMap<String, String> candidateProps = new TreeMap<String, String>();
-		IntrospectionSupport.getProperties(candidate, candidateProps, null);
-
-		return configMatchProps(dtoProps, candidateProps);
-	}
-
-    private boolean configMatch(DtoNetworkConnector dto, NetworkConnector candidate) {
+    private boolean configMatch(DtoNetworkConnector dto, Object candidate) {
         Properties dtoProps = new Properties();
         IntrospectionSupport.getProperties(dto, dtoProps, null);
         // the live candidate has its ${foo} placeholders already resolved, so resolve them on
@@ -131,11 +121,6 @@ public class NetworkConnectorProcessor extends DefaultConfigurationProcessor {
 
         TreeMap<String, String> candidateProps = new TreeMap<String, String>();
         IntrospectionSupport.getProperties(candidate, candidateProps, null);
-
-		return configMatchProps(dtoProps, candidateProps);
-	}
-
-	private boolean configMatchProps(TreeMap<String, String> dtoProps, TreeMap<String, String> candidateProps) {
 
         // every dto prop must be present in the candidate
         for (Object keyObj : dtoProps.keySet()) {
